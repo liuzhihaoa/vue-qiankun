@@ -1,0 +1,53 @@
+:root {
+  /*************************** 在根元素内定义初始的css变量 ****************************/
+  /*************************** css变量和普通的css样式的key唯一的差别就是加一个前缀-- ****************************/
+
+  /* 基础的内间距单元 */
+  --spacing-unit: 6px;
+
+  /* 基础外间距 */
+  --margins: 2;
+
+  /* 基础主题色，可以通过在style内部设置高优先级的--primary-color来覆盖此处的--primary-color */
+  --primary-color: #5e35b1;
+  --primary-color-text: #fff;
+
+  /* 每行可以显示几列.通过动态计算列宽实现 */
+  --grid-columns: 3;
+
+  /***************************** css变量还可以通过计算得到更为灵活的值****************************/
+
+  /* 通过放大按倍数的基础值来获得更为标准的ui间距规范 */
+  --margin-size: (var(--margins) * 2);
+  /* 通过放大按倍数的基础值来获得更为标准的ui间距规范 */
+  --cell-padding: (4 * var(--spacing-unit));
+  /* 甚至可以通过变量与变量之间的计算来获取更为灵活的间距标准 */
+  --grid-gutter: (var(--margins) * var(--spacing-unit));
+  /* 甚至可以通过变量与变量之间的计算来获取更为灵活的间距标准 */
+  --grid-margin: (var(--margin-size) * var(--spacing-unit));
+  /* 同样可以通过计算来动态获取页面可以容纳的容器个数 */
+  --cell-margin: (var(--grid-gutter) / 2);
+}
+
+.header {
+  /* 省略部分非核心代码 */
+  /* 如果变量未定义，我们还可以使用默认值来规避样式无法展示问题 */
+  background-color: var(--primary-color, #5e35b1);
+}
+
+.title {
+  /* 省略部分非核心代码 */
+  /* 字体大小动态设置 */
+  font-size: calc(4 * var(--spacing-unit));
+}
+
+.shade {
+  /* 省略部分非核心代码 */
+  /* 高度大小动态设置 */
+  height: calc(8 * var(--spacing-unit));
+}
+
+.cell {
+  /* 动态获取可以显示几列卡片 */
+  width: calc(100% / var(--grid-columns) - var(--grid-gutter));
+}
