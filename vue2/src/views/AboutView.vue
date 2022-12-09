@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:43:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-10-19 10:24:00
+ * @LastEditTime: 2022-11-15 16:33:01
 -->
 <!-- 模块说明 -->
 <template>
@@ -18,6 +18,8 @@
         <tree-list :tree-data="item.children"></tree-list>
       </div>
     </div>
+    <input type="text"
+           v-model="num">
   </div>
 </template>
 
@@ -43,19 +45,17 @@ export default {
       },
       count: 0,
       count1: 0,
+      num: 0,
+      timer: null
     }
   },
   computed: {},
   watch: {},
   methods: {
     addCount () {
-      let timer
       this.count++
-      if (this.count < 2000) {
-        requestAnimationFrame(this.addCount)
-      } else {
-        cancelAnimationFrame(timer)
-      }
+      this.timer = requestAnimationFrame(this.addCount)
+      this.count >= 2000 && cancelAnimationFrame(this.timer)
     },
     addCount1 () {
       let timer = setInterval(() => {
@@ -68,7 +68,7 @@ export default {
     }
   },
   created () {
-    requestAnimationFrame(this.addCount)
+    this.addCount();
     this.addCount1();
   }
 }

@@ -3,10 +3,15 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:43:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-10-19 10:42:57
+ * @LastEditTime: 2022-11-11 11:31:51
 -->
 <template>
   <div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link>
+      |
+      <router-link to="/about">About</router-link>
+    </div>
     <keep-alive>
       <router-view />
     </keep-alive>

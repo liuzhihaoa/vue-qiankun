@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:43:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-10-19 14:06:43
+ * @LastEditTime: 2022-11-11 10:13:42
  */
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
@@ -13,11 +13,11 @@ Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
-    path: '/home',
-    redirect: '/'
+    path: '/',
+    redirect: '/home'
   },
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: HomeView
   },

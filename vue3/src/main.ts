@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:29:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-10-08 15:38:18
+ * @LastEditTime: 2022-11-11 11:04:33
  * @description: 
  */
 import './public-path'
@@ -24,7 +24,7 @@ interface props {
 }
 let instance:any
 async function render(props:props) {
-  const { container, routerBase,mainStore }  = props;
+  const { container, routerBase }  = props;
   actions.setActions(props)
   instance = createApp(App);
   const router = createRouter({
@@ -41,17 +41,6 @@ async function render(props:props) {
     scaleStep: 0.05
   }))
   /* eslint-disable */
-  router.afterEach((to) => {
-    const matched = to.matched.map((v) => {
-      const {meta,path,name}=v
-      return {
-        name,
-        path:`${routerBase}${path}`,
-        meta
-        }
-    })
-    mainStore.commit('app/SET_BREADCRUMB',matched)
-  })
   instance.mount(container ? container?.querySelector("#app") as HTMLElement : "#app");
 
 }

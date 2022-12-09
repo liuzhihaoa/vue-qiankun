@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-10-13 11:02:07
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-10-17 15:21:40
+ * @LastEditTime: 2022-11-11 09:50:20
  * @description: 
  */
 import './public-path'
@@ -58,9 +58,8 @@ export async function mount(props:props) {
 }
 
 export async function unmount () {
-  console.log(111)
-  instance.unmount();
-  instance._container.innerHTML = '';
+  instance.$destroy();
+  instance.$el.innerHTML = '';
   instance = null;
   router = null;
 }

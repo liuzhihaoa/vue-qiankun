@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:29:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-10-08 11:13:03
+ * @LastEditTime: 2022-11-11 10:47:33
  * @description: 
  */
 import {  RouteRecordRaw } from 'vue-router'
@@ -11,11 +11,11 @@ import HomeView from '../views/HomeView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/home',
-    redirect: '/'
+    path: '/',
+    redirect:'/home'
   },
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: HomeView,
     meta: {
