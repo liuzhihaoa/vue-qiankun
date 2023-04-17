@@ -3,24 +3,44 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:29:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-11-03 16:25:02
- * @description: 
+ * @LastEditTime: 2023-04-12 17:29:58
+ * @description:
  */
 
-const { name } = require('./package');
+const { name } = require("./package");
+const path = require("path");
+const { config } = require("process");
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
 module.exports = {
-  publicPath:"/",
+  publicPath: "/",
   lintOnSave: false,
   devServer: {
-    port:7106,
+    port: 7106,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      "Access-Control-Allow-Origin": "*",
+    },
+    proxy: {
+      "/api": {
+        target: "http://10.27.3.145:8090",
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          "^/": "/",
+        },
+      },
     },
   },
   configureWebpack: {
+    resolve: {
+      alias: {
+        "@": resolve("src"),
+      },
+    },
     output: {
       library: `${name}-[name]`,
-      libraryTarget: 'umd', // 把微应用打包成 umd 库格式
+      libraryTarget: "umd", // 把微应用打包成 umd 库格式
       chunkLoadingGlobal: `webpackJsonp_${name}`,
     },
   },

@@ -3,32 +3,27 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-09-14 10:34:11
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-09-20 16:02:24
+ * @LastEditTime: 2023-01-10 16:50:51
  * @description: 
 -->
 <template>
   <ul class="todo-main">
-    <Item v-for="(todo,index) of todos"
-          :todo="todo"
-          :key="index"
-          v-bind="$attrs">
+    <Item v-for="(todo, index) of todos" :todo="todo" :key="index" v-bind="$attrs">
       <template #test="slotProps">
-        <slot name="test"
-              v-bind="slotProps"></slot>
+        <slot name="test" v-bind="slotProps"></slot>
       </template>
     </Item>
-
   </ul>
-
+  <slot></slot>
 </template>
-<script lang='ts'>
+<script lang="ts">
 // 解构
-import { defineComponent, ref, toRefs } from 'vue'
-import Item from './Item.vue'
-import { Todo } from '../types/todo'
+import { defineComponent, ref, toRefs } from "vue";
+import Item from "./Item.vue";
+import { Todo } from "../types/todo";
 // 模块化
 export default defineComponent({
-  name: 'List', //组件名称
+  name: "List", //组件名称
   inheritAttrs: false,
   props: {
     // 接收父组件数据
@@ -38,17 +33,17 @@ export default defineComponent({
     Item,
   },
   setup(props, ctx) {
-    console.log(ctx)
+    console.log("lisctx", ctx.slots.default?.());
     const data = ref({
-      name: '刘志豪',
-      sex: '男',
-    })
+      name: "刘志豪",
+      sex: "男",
+    });
     // 这里没有this,直接使用props里数据
     return {
       data,
-    }
+    };
   },
-})
+});
 </script>
 <style scoped>
 .todo-main {
@@ -67,4 +62,3 @@ export default defineComponent({
   margin-top: 10px;
 }
 </style>
- 
