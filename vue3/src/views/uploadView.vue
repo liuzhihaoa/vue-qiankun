@@ -1,8 +1,8 @@
 <template>
-  <label htmlFor="my-file">请选择一个文件：</label>
+  <label class="my-file">请选择一个文件：</label>
   <input type="file" id="my-file" name="my-file" @change="handleFileChange" />
   <div>
-    <input type="button" value="停止" @lick="handleStop" />
+    <input type="button" value="停止" @click="handleStop" />
   </div>
   <div>上传进度：{{ progress.toFixed(2) }}%</div>
   <div>
@@ -13,9 +13,11 @@
 </template>
 <script lang="ts">
 // 解构
-import { defineComponent, ref } from "vue";
-import axios, { AxiosProgressEvent, Canceler } from "axios";
+import { defineComponent, reactive, ref } from "vue";
+import axios, { AxiosProgressEvent } from "axios";
 import SparkMD5 from "spark-md5";
+import { http } from "@/request";
+
 // 模块化
 export default defineComponent({
   name: "upload-view1", //组件名称
@@ -58,7 +60,8 @@ export default defineComponent({
 
     const progress = ref<number>(0);
     const progressArr = ref<number[]>([]);
-    const cancelFuncArr = ref<Canceler[]>([]);
+    // const cancelFuncArr = reactive<AbortController[]>([]);
+    const cancelFuncArr: AbortController[] = [];
     const totalSize = ref(Number.MAX_SAFE_INTEGER);
     const filename = ref("");
     const fileChunks = ref<FileChunk[]>([]);
@@ -105,21 +108,35 @@ export default defineComponent({
     };
 
     const uploadFile = (formData: FormData, chunkIndex: number) => {
-      return request({
-        url: "/upload",
-        method: "POST",
-        data: formData,
-        onUploadProgress: (progressEvent) => handleUploadProgress(progressEvent, chunkIndex),
-        cancelToken: new axios.CancelToken((cancelFunc) => {
-          cancelFuncArr.value[chunkIndex] = cancelFunc;
-        }),
-      })
+      const controller: AbortController = new AbortController();
+      cancelFuncArr[chunkIndex] = controller;
+      return http
+        .post("http://127.0.0.1:4000/api/upload", formData, {
+          cancelSame: false,
+          onUploadProgress: (progressEvent) => handleUploadProgress(progressEvent, chunkIndex),
+          signal: controller.signal,
+        })
         .then(() => {
           console.log("上传成功");
         })
         .catch(() => {
           console.log("上传失败");
         });
+      // return request({
+      //   url: "/upload",
+      //   method: "POST",
+      //   data: formData,
+      //   onUploadProgress: (progressEvent) => handleUploadProgress(progressEvent, chunkIndex),
+      //   cancelToken: new axios.CancelToken((cancelFunc) => {
+      //     cancelFuncArr.value[chunkIndex] = cancelFunc;
+      //   }),
+      // })
+      //   .then(() => {
+      //     console.log("上传成功");
+      //   })
+      //   .catch(() => {
+      //     console.log("上传失败");
+      //   });
     };
 
     const verifyUpload = (filename: string, hash: string) => {
@@ -140,7 +157,6 @@ export default defineComponent({
     };
 
     const sliceChunks = async (hash: string, chunksSize: number[]) => {
-      console.log("chunksSize", chunksSize);
       for (let i = 0; i < fileChunks.value.length; i++) {
         const fileChunk = fileChunks.value[i];
         const formData = new FormData();
@@ -148,7 +164,6 @@ export default defineComponent({
         formData.append("chunkIndex", String(fileChunk.chunkIndex));
         formData.append("hash", hash);
         formData.append("file", fileChunk.chunk);
-        console.log(fileChunk.chunk);
         if (chunksSize[i] !== fileChunk.chunk.size) {
           // size一样的说明已经上传完毕了，只传size不一样的
           const uplaodTask = uploadFile(formData, i);
@@ -162,7 +177,6 @@ export default defineComponent({
           handleFinishedUploadProgress(chunksSize[i], i);
         }
       }
-      console.log("POOL", POOL);
       Promise.all(POOL).then(() => {
         mergeFile(filename.value, hash);
       });
@@ -223,9 +237,14 @@ export default defineComponent({
     };
 
     const handleStop = () => {
-      cancelFuncArr.value.forEach((cancelFunc) => {
-        cancelFunc();
-      });
+      console.log(cancelFuncArr);
+      // cancelFuncArr.forEach((cancelFunc) => {
+      //   cancelFunc();
+      // });
+      for (const v of cancelFuncArr) {
+        console.log(v);
+        v?.abort();
+      }
       fileChunks.value = [];
       setProgress(0, 1);
     };
