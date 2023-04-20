@@ -3,11 +3,10 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2023-01-12 10:05:58
  * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-18 16:14:44
+ * @LastEditTime: 2023-04-20 11:52:03
  * @description: 描述
  */
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
-import { ElLoading } from "element-plus";
 import { ResponseType, axiosConfig } from "./type";
 import { AxiosCancle } from "./cancle";
 import axiosLoading from "./loading";
@@ -27,13 +26,13 @@ const defaultConfig: axiosConfig = {
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // @ts-ignore
-    const { cancelSame, loading, isToken } = config.requestOptions;
+    const { cancelSame, loading, isToken } = config;
     if (cancelSame) {
       axiosCanle.addPending(config);
     }
     if (isToken) {
       config.headers.Authorization =
-        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJsemhAdGVzdC5jb20iLCJzY29wZSI6WyJzZXJ2ZXIiXSwidGVuYW50SWQiOiIwYWRiMDRkNTQ3MjM0M2VhMjNjMDhkM2YzMGQ0MzY0YiIsInNvdXJjZSI6MSwiZXhwIjoxNjgyNTE4Njg1LCJpc1RlbmFudENyZWF0b3IiOjAsInVzZXJJZCI6IjAzODMxNGI1MTRiZDIzMjlkMjVjZmE4MjJlYmQxZmNkIiwianRpIjoiYTMzZTQyNWEtMWVkYi00Yzk3LTk2YjgtYWVkNWM4NTQ5Y2M4IiwiY2xpZW50X2lkIjoiaXN0cm9tX29hdXRoIiwidXNlcm5hbWUiOiJsemhAdGVzdC5jb20ifQ.RcOh5u-Lc7csoNPHkrz0KxzlZOyDIaOe8C36JqAhjZ-WbB5KI5WqREtuPi9Pzf88RQ-DN5b7GDTrz_5r2eLApmXEUPQ1bYeIVGco1nyq7JA2jj1pwSDSBJmjsl3Dy7QCqOjqjtWWwup0LuRxkMhZnl14ek8he6mTbGWeN0m3pT4B_upXS5gc7-OtRD0DXRccCAbhjusGQb4TmG72l7wlOR-oImkwF-iI6rwnbDpr428mqcSpCes8FkTQ09A3Och16jx9jwmTWD07N6VV2LweJA0p9L0iYLgr-HteNaF_LYcNecM3fsWp3fd9zFeMZ8_CXKxdenv1gRMB7Kvl6gk-lQ";
+        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJsemhAdGVzdC5jb20iLCJzY29wZSI6WyJzZXJ2ZXIiXSwidGVuYW50SWQiOiIwYWRiMDRkNTQ3MjM0M2VhMjNjMDhkM2YzMGQ0MzY0YiIsInNvdXJjZSI6MSwiZXhwIjoxNjgyNjc4ODAzLCJpc1RlbmFudENyZWF0b3IiOjAsInVzZXJJZCI6IjAzODMxNGI1MTRiZDIzMjlkMjVjZmE4MjJlYmQxZmNkIiwianRpIjoiZmM5NDgyY2UtNWE5Mi00M2JlLWFjMzQtYTAzYjM5NTllNzA4IiwiY2xpZW50X2lkIjoiaXN0cm9tX29hdXRoIiwidXNlcm5hbWUiOiJsemhAdGVzdC5jb20ifQ.Pw0OLb196kgNcfdj2y-fB2ha0DWGBjOgk5XXbNB1gQmvnliTeBtqXfE_ANQO8-rYzKqL4AU94SqE5N2lpHlONZH8XqroSD1Q4hPmaYyViivdHXXhuetfyFrKIMKweO_pOy7kpvH8igQ0xeaj1BNu3Vf-iiqw7g4ZU6kEoL0SazRQ4NdzHX0igWNJ1gN4iGGuugjunbYEEwOSGi6yHC23jwSVDDR1nEHzNFCTJ8poRzbDNcHwt18ZEIISELAYEqkQy6uLUJlDWmMgZzJHrW0IYmKG8dWen8j70cynxxdhvR0POmzo9vRGwLqxgRGvxXicLnZBNHt8DkrQaZ2Pg5irpw";
     }
     if (loading) {
       axiosLoading.addloading({ fullscreen: true });
@@ -49,7 +48,6 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log("response", response);
     axiosCanle.removePedding(response.config);
     axiosLoading.closeLoading();
     return response;
@@ -83,7 +81,7 @@ export const http = {
       url,
       method,
       ...data,
-      requestOptions: options,
+      ...options,
     });
     return res.data;
   },
