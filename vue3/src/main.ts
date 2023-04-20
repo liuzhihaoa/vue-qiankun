@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:29:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-06 15:38:46
+ * @LastEditTime: 2023-04-18 15:58:03
  * @description:
  */
 import "./public-path";
@@ -15,6 +15,7 @@ import store from "./store";
 import actions from "@/qiankun/actions";
 import i18n from "@/locals";
 import Fit from "vue-fit-next";
+import "element-plus/dist/index.css";
 interface props {
   container: any;
   routerBase: string;
