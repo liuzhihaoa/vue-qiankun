@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2023-04-07 16:58:28
  * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-10 14:04:13
+ * @LastEditTime: 2023-04-18 16:13:58
  * @description: 描述
  */
 
@@ -22,7 +22,6 @@ export class AxiosCancle {
   addPending(config: AxiosRequestConfig) {
     this.removePedding(config);
     const key: string = this.generateKey(config);
-    console.log("key2", key);
     const controller = new AbortController();
     config.signal = controller.signal;
     this.pendingMap.set(key, controller);
@@ -30,11 +29,10 @@ export class AxiosCancle {
 
   removePedding(config: AxiosRequestConfig) {
     const key: string = this.generateKey(config);
-    console.log("key", this.pendingMap.get(key));
     if (this.pendingMap.has(key)) {
+      console.log(`重复请求${key}`);
       this.pendingMap.get(key)?.abort();
       this.pendingMap.delete(key);
-      console.log("this.pendingMap", this.pendingMap);
     }
   }
 }
