@@ -3,45 +3,61 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2023-01-12 10:05:58
  * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-10 14:14:57
+ * @LastEditTime: 2023-04-18 16:14:44
  * @description: 描述
  */
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
-import { ElMessage } from "element-plus";
-import { ResponseType } from "./type";
+import { ElLoading } from "element-plus";
+import { ResponseType, axiosConfig } from "./type";
 import { AxiosCancle } from "./cancle";
+import axiosLoading from "./loading";
 
 const axiosCanle = new AxiosCancle();
+
 const service: AxiosInstance = axios.create({
   baseURL: "/api",
   timeout: 50000,
 });
 
+const defaultConfig: axiosConfig = {
+  cancelSame: true,
+  loading: true,
+  isToken: true,
+};
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    axiosCanle.addPending(config);
-    config.headers.Authorization =
-      "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJiY21zM0BiY21zMy5jb20iLCJzY29wZSI6WyJzZXJ2ZXIiXSwidGVuYW50SWQiOiIwYWRiMDRkNTQ3MjM0M2VhMjNjMDhkM2YzMGQ0MzY0YiIsInNvdXJjZSI6MCwiZXhwIjoxNjgxNTY2NTY4LCJpc1RlbmFudENyZWF0b3IiOjEsInVzZXJJZCI6IjllZDNhOTE1NTljYzljZjFkNzVkZDBhN2VmY2QwNDlmIiwianRpIjoiOGIxYmMwZDAtMzUyNi00YmVlLTg1YmUtMWNhNzlhZTdiMWRhIiwiY2xpZW50X2lkIjoiaXN0cm9tX29hdXRoIiwidXNlcm5hbWUiOiJiY21zM0BiY21zMy5jb20ifQ.kmxpLzwOyOnOnKlj2GG7Fj92x4GSzh69yKIGDzYhOowWEGl32_wrce7vR5YNv9JzfSibyQFRsUaGA0VzYNuOH5BxFk6EPpSrabpbzIwoxr_fuif0NXSmcWDHTQIBUoour8xy1u76-Z7EjZnxCSQ7x-D1l2QMvVLR2pd935pyxAZN9KihsyD43IyuW3Hye1-5gWpNBADXQsE2w5zdkYANGaJ_0ZG7mvYiDfp0T4fsSJOhgmMKyBGKTftMKgy2v1wZKSQTtL6N_6NTuxL0xS2e5pP4iY1SsTzvRlN9UpZF7LsQEErxZ5QOiRNYSom6EDiQrCTnt8PpUZJ05nUc8UhCWA";
-    //console.log(config);
+    // @ts-ignore
+    const { cancelSame, loading, isToken } = config.requestOptions;
+    if (cancelSame) {
+      axiosCanle.addPending(config);
+    }
+    if (isToken) {
+      config.headers.Authorization =
+        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJsemhAdGVzdC5jb20iLCJzY29wZSI6WyJzZXJ2ZXIiXSwidGVuYW50SWQiOiIwYWRiMDRkNTQ3MjM0M2VhMjNjMDhkM2YzMGQ0MzY0YiIsInNvdXJjZSI6MSwiZXhwIjoxNjgyNTE4Njg1LCJpc1RlbmFudENyZWF0b3IiOjAsInVzZXJJZCI6IjAzODMxNGI1MTRiZDIzMjlkMjVjZmE4MjJlYmQxZmNkIiwianRpIjoiYTMzZTQyNWEtMWVkYi00Yzk3LTk2YjgtYWVkNWM4NTQ5Y2M4IiwiY2xpZW50X2lkIjoiaXN0cm9tX29hdXRoIiwidXNlcm5hbWUiOiJsemhAdGVzdC5jb20ifQ.RcOh5u-Lc7csoNPHkrz0KxzlZOyDIaOe8C36JqAhjZ-WbB5KI5WqREtuPi9Pzf88RQ-DN5b7GDTrz_5r2eLApmXEUPQ1bYeIVGco1nyq7JA2jj1pwSDSBJmjsl3Dy7QCqOjqjtWWwup0LuRxkMhZnl14ek8he6mTbGWeN0m3pT4B_upXS5gc7-OtRD0DXRccCAbhjusGQb4TmG72l7wlOR-oImkwF-iI6rwnbDpr428mqcSpCes8FkTQ09A3Och16jx9jwmTWD07N6VV2LweJA0p9L0iYLgr-HteNaF_LYcNecM3fsWp3fd9zFeMZ8_CXKxdenv1gRMB7Kvl6gk-lQ";
+    }
+    if (loading) {
+      axiosLoading.addloading({ fullscreen: true });
+    }
     return config;
   },
   (error: AxiosError) => {
-    //Message.error(error);
-    return Promise.reject(error);
+    // Message.error(error);
+    axiosLoading.closeLoading();
+    Promise.reject(error);
   }
 );
 
 service.interceptors.response.use(
   (response: AxiosResponse) => {
     console.log("response", response);
-    console.log(3333);
     axiosCanle.removePedding(response.config);
+    axiosLoading.closeLoading();
     return response;
   },
   (error: AxiosError) => {
     // Message.error(error);
-    if (error.code === "ERR_CANCELED") return Promise.reject(error);
-    console.log(error);
+    console.log("error", error);
+    axiosLoading.closeLoading();
     error.config && axiosCanle.removePedding(error.config);
     return Promise.reject(error);
   }
@@ -61,19 +77,26 @@ service.interceptors.response.use(
 // };
 
 export const http = {
-  async request<T>(config: AxiosRequestConfig): Promise<ResponseType<T>> {
-    const { data } = await service.request<ResponseType<T>>(config);
-    if (data.code !== 200) {
-      ElMessage.error(data.message);
-    }
-    return data;
+  async request<T>(url: string, method = "GET", data?: any, config?: axiosConfig): Promise<ResponseType<T>> {
+    const options = { ...defaultConfig, ...config };
+    const res = await service<ResponseType<T>>({
+      url,
+      method,
+      ...data,
+      requestOptions: options,
+    });
+    return res.data;
   },
-  async get<T>(url: string, config?: AxiosRequestConfig): Promise<ResponseType<T>> {
-    const { data } = await service.get<ResponseType<T>>(url, config);
-    return data;
+  async get<T>(url: string, data: any, config?: axiosConfig): Promise<ResponseType<T>> {
+    return http.request(url, "GET", { params: data }, config);
   },
-  async post<T>(url: string, params?: any, config?: AxiosRequestConfig): Promise<ResponseType<T>> {
-    const { data } = await service.post<ResponseType<T>>(url, params, config);
-    return data;
+  async post<T>(url: string, data?: any, config?: axiosConfig): Promise<ResponseType<T>> {
+    return http.request(url, "POST", { data }, config);
+  },
+  async put<T>(url: string, data?: any, config?: axiosConfig): Promise<ResponseType<T>> {
+    return http.request(url, "PUT", { data }, config);
+  },
+  async delete<T>(url: string, data?: any, config?: axiosConfig): Promise<ResponseType<T>> {
+    return http.request(url, "DELETE", { params: data }, config);
   },
 };
