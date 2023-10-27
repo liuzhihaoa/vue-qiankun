@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:29:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-18 15:58:03
+ * @LastEditTime: 2023-05-04 10:37:20
  * @description:
  */
 import "./public-path";
@@ -15,6 +15,7 @@ import store from "./store";
 import actions from "@/qiankun/actions";
 import i18n from "@/locals";
 import Fit from "vue-fit-next";
+import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 interface props {
   container: any;
@@ -35,6 +36,7 @@ async function render(props: props) {
   instance.use(router);
   instance.use(store);
   instance.use(i18n);
+  instance.use(ElementPlus);
   instance.use(
     Fit({
       width: 3840,

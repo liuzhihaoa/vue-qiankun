@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-10-13 11:02:07
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-12-09 16:50:22
+ * @LastEditTime: 2023-05-04 16:05:15
  * @description:
  */
 import "./public-path";
@@ -32,6 +32,18 @@ function render(props: props) {
     base: window.__POWERED_BY_QIANKUN__ ? `${routerBase}` : "/",
     mode: "history",
     routes,
+    scrollBehavior(to, form, position) {
+      console.log("to", to);
+      console.log("from", form);
+      console.log("position", position);
+      if (position) {
+        return position;
+      }
+      return {
+        x: 0,
+        y: 500,
+      };
+    },
   });
 
   instance = new Vue({

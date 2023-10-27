@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:43:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-11-11 11:31:51
+ * @LastEditTime: 2023-08-15 19:50:34
 -->
 <template>
   <div id="app">
@@ -12,9 +12,8 @@
       |
       <router-link to="/about">About</router-link>
     </div>
-    <keep-alive>
-      <router-view />
-    </keep-alive>
+
+    <router-view />
   </div>
 </template>
 

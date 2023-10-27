@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:29:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-13 17:10:04
+ * @LastEditTime: 2023-10-18 11:25:59
  * @description:
  */
 import { RouteRecordRaw } from "vue-router";
@@ -66,8 +66,27 @@ const routes: Array<RouteRecordRaw> = [
       title: "uploadDemo",
     },
   },
+  {
+    path: "/progress",
+    name: "progress",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "uploadDemo" */ "../views/progress.vue"),
+    meta: {
+      title: "progressDemo",
+    },
+  },
 ];
 
+const requireModules = require.context("../views", true, /\.vue$/);
+console.log("requireModules", requireModules.id);
+const modules: Record<string, string> = {};
+requireModules.keys().forEach((fileName) => {
+  console.log(requireModules(fileName));
+  modules[fileName.replace(/(\.\/|\.vue)/g, "")] = requireModules(fileName).default;
+});
+console.log("modules", modules);
 // const router = createRouter({
 //   history: createWebHistory(process.env.BASE_URL),
 //   routes

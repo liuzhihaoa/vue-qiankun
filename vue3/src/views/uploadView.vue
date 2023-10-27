@@ -242,7 +242,6 @@ export default defineComponent({
       //   cancelFunc();
       // });
       for (const v of cancelFuncArr) {
-        console.log(v);
         v?.abort();
       }
       fileChunks.value = [];

@@ -1,29 +1,13 @@
 <!--
  * @Author: liuzhihao
  * @email: liuzhihao@hatech.com.cn
- * @Date: 2022-10-27 11:28:20
- * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-10 11:38:36
- * @description: 描述
--->
-<!--
- * @Author: liuzhihao
- * @email: liuzhihao@hatech.com.cn
- * @Date: 2022-10-27 11:28:20
- * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-06 17:24:09
- * @description: 描述
--->
-<!--
- * @Author: liuzhihao
- * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-09-14 10:34:00
  * @LastEditors: liuzhihao
- * @LastEditTime: 2023-04-04 17:12:25
+ * @LastEditTime: 2023-10-25 10:16:18
  * @description: 
 -->
 <template>
-  <div class="todo-container">
+  <div class="todo-container" v-resize-ob=handleSizeChange>
     <div class="todo-wrap" ref="wrapRef">
       <button @click="changeLang('en')">切换语言</button>
       <Header @add="addToCount" />
@@ -32,10 +16,10 @@
         <template #> 测试 </template>
       </List>
       <Footer :todos="todos" />
-      <button @click="changeCount('en')">切换语言</button>
+      <button @click="changeCount">修改数量</button>
     </div>
-    <div><input type="text" v-model="keyword" /></div>
-    {{ obj.bar }}
+    <div><input type="text" v-model="computedObj.name" /></div>
+    <div> 文本：{{computedObj.name }}</div>
     <button @click="changeRaw">修改toRaw对象</button>
   </div>
 </template>
@@ -49,6 +33,8 @@ import Footer from "@/components/Footer.vue";
 import { Todo } from "../types/todo";
 import { useI18n } from "vue-i18n";
 import { getMenuData, getUserInfo } from "../../api/user";
+import {debounceRef} from '@/hook/debounceRef';
+import resizeOb from '@/directive/resize'
 
 interface Person {
   name: string;
@@ -75,6 +61,7 @@ export default defineComponent({
   },
   setup(props, ctx) {
     console.log("ctx", ctx);
+    let color = ref("#f00");
     const { locale } = useI18n();
     const state = reactive<{ todos: Todo[] }>({
       todos: [
@@ -129,13 +116,14 @@ export default defineComponent({
     const dealMenuData = async () => {
       const menuData = await getMenuData({ id: "9ed3a91559cc9cf1d75dd0a7efcd049f" });
     };
+
     const dealUserInfo = async () => {
       const userInfo = await getUserInfo({
         password: "BAudJRPosKMeCcvumy8ueauCEQuYhDn503szbfjuhZFfQhBuslyxW6Xkh46NmMQ32o7JWnaK/Sgsu/UvuuWQSocFCK0OLFd7UWC5kQ5NGUMFJRf6O1UURW+NBIlh3nukJflw4SvLb5U=",
         username: "bcms3@bcms3.com",
       });
+      console.log("userInfo", userInfo);
     };
-    //dealMenuData();
     // 通过ref获取dom元素
     const wrapRef = ref();
     onMounted(() => {
@@ -160,8 +148,6 @@ export default defineComponent({
     const listRef = ref<any>();
     watch([state.todos, obj], ([newtodo, newobj], [todo, preobj]) => {
       console.log(6, listRef.value && listRef.value.$el);
-      console.log(1, newtodo);
-      console.log(2, toRefs(newobj));
     });
     //watchEffect
     watchEffect((onCleanUp) => {
@@ -174,7 +160,7 @@ export default defineComponent({
       });
     });
     // watchEffect防抖
-    const keyword = ref<string>("");
+    const keyword = debounceRef<string>("");
     const debounce = (val: string, time: number) => {
       return setTimeout(() => {
         console.log(`用户输入：${val}`);
@@ -245,7 +231,6 @@ export default defineComponent({
     loggingIdentity({ length: 3, value: 4 });
 
     const changeRaw = () => {
-      //console.log("obj", obj);
       dealMenuData();
     };
     const addToCount = (e: Event) => {
@@ -282,32 +267,58 @@ export default defineComponent({
     //切换语言
     const changeLang = (lang: string) => {
       dealUserInfo();
+      dealMenuData();
       locale.value = lang;
     };
+    //修改数量
+    const changeCount = () => {};
+    const handleSizeChange = (size:{width:number,height:number}) => {
+      console.log('size',size)
+    }
+
+    // const testObj=ref({name:'123'})
+    const testObj=ref({name:'123'})
+    const computedObj=computed({
+      get(){
+        return testObj.value
+      },
+      set(val){
+        console.log('123')
+      }
+    })
     return {
       ...toRefs(state),
       addToCount,
       delCount,
       updateTodo,
       changeLang,
+      changeCount,
       obj,
       wrapRef,
       listRef,
       keyword,
       changeRaw,
       obj1,
+      color,
+      handleSizeChange,
+      computedObj,
+      testObj
     };
   },
+  directives:{
+   resizeOb
+  }
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 .todo-container {
-  width: 600px;
+  width: 40%;
   margin: 0 auto;
 }
 .todo-container .todo-wrap {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  color: v-bind(color);
 }
 </style>
