@@ -3,7 +3,7 @@
  * @email: liuzhihao@hatech.com.cn
  * @Date: 2022-08-31 16:43:40
  * @LastEditors: liuzhihao
- * @LastEditTime: 2022-09-05 17:32:44
+ * @LastEditTime: 2023-10-27 17:25:03
 -->
 <!-- 模块说明 -->
 <template>
@@ -14,17 +14,25 @@
     <loop-component :treeData="treeData">
 
     </loop-component>
+
+    <SearchSelect v-model="id" :options="list" :props="{
+          value:'value',
+          label: 'label',
+        }" />
+
   </div>
 </template>
 
 <script>
 // import treeList from './AboutView';
 import loopComponent from './jsxView'
+import SearchSelect from '@/components/SearchSelect'
 export default {
   // 组件注册
   components: {
     // treeList,
-    loopComponent
+    loopComponent,
+    SearchSelect
   },
   mixins: [],
   props: [],
@@ -55,7 +63,14 @@ export default {
             { id: 9, name: '二级3-2' },
             { id: 10, name: '二级3-3' }
           ]
-        }]
+        }],
+      list:new Array(10000).fill(1).map((v,i)=>{
+          return {
+            value:i,
+            label:`第${i}个`
+          }
+        }),
+      id:1
     }
   },
   computed: {},
